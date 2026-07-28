@@ -381,8 +381,47 @@
   /* ================= BLOCK SECTIONS ================= */
   /* ================= PROOF-OF-WORK PUZZLE ================= */
   .puzzle{
-    padding:60px 0 50px;
-    border-bottom:1px solid var(--line);
+    position:relative;
+    padding:44px 32px 54px;
+    margin:20px 0 40px;
+    border-bottom:none;
+    border-radius:8px;
+    background:
+      radial-gradient(ellipse 500px 260px at 15% 0%, rgba(51,198,224,0.10), transparent 60%),
+      radial-gradient(ellipse 500px 260px at 100% 100%, rgba(232,184,75,0.08), transparent 60%),
+      var(--bg-raised);
+    border:1px solid var(--line);
+    overflow:hidden;
+  }
+  .puzzle::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:34px 34px;
+    pointer-events:none;
+  }
+  .puzzle::after{
+    content:"";
+    position:absolute;
+    left:0; right:0;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent);
+    top:0;
+    animation:scanline 4.5s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes scanline{
+    0%{ transform:translateY(0); opacity:0; }
+    10%{ opacity:.8; }
+    90%{ opacity:.8; }
+    100%{ transform:translateY(280px); opacity:0; }
+  }
+  .puzzle > *{ position:relative; z-index:1; }
+  @media (prefers-reduced-motion: reduce){
+    .puzzle::after{ animation:none !important; display:none; }
   }
   .puzzle .block-tag{
     font-size:11.5px;
@@ -406,9 +445,9 @@
   }
 
   .block-header{
-    background:var(--bg-raised);
+    background:var(--bg);
     border:1px solid var(--line);
-    border-radius:3px;
+    border-radius:5px;
     padding:18px 20px;
     font-size:13px;
     margin-bottom:18px;
@@ -606,18 +645,36 @@
 
   .signature{
     font-family:'Caveat', cursive;
-    font-size:40px;
+    font-size:56px;
+    font-weight:600;
     color:var(--accent);
     line-height:1;
-    margin-top:6px;
+    margin-top:10px;
     opacity:0;
-    transform:translateY(6px);
+    transform:translateY(6px) scale(.95);
     transition:opacity .5s ease, transform .5s ease;
     will-change:opacity, transform;
+    position:relative;
+    display:inline-block;
+  }
+  .signature::after{
+    content:"";
+    position:absolute;
+    left:2px;
+    bottom:-4px;
+    width:70%;
+    height:2px;
+    background:linear-gradient(90deg, var(--accent), transparent);
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .6s ease .15s;
   }
   .signature.shown{
     opacity:1;
-    transform:translateY(0);
+    transform:translateY(0) scale(1);
+  }
+  .signature.shown::after{
+    transform:scaleX(1);
   }
   .signature-caption{
     font-family:'IBM Plex Mono', monospace;
@@ -674,6 +731,37 @@
   .proj .links{ font-size:13px; }
   .proj .links a{ margin-right:16px; }
 
+  .proj-metrics{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:10px;
+    margin:6px 0 16px;
+    padding:12px 0;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  @media (max-width:520px){
+    .proj-metrics{ grid-template-columns:1fr 1fr; }
+  }
+  .proj-metrics > div{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .proj-metrics .pm-val{
+    font-family:'Newsreader', serif;
+    font-weight:600;
+    font-size:19px;
+    color:var(--accent);
+  }
+  .proj-metrics .pm-label{
+    font-size:10px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    margin-top:2px;
+  }
+
   .skill-blocks{
     display:grid;
     grid-template-columns:repeat(2, 1fr);
@@ -683,9 +771,28 @@
   .skill-block{
     background:var(--bg-raised);
     border:1px solid var(--line);
-    border-radius:3px;
-    padding:14px 16px;
+    border-radius:5px;
+    padding:18px 16px 16px;
     position:relative;
+    overflow:hidden;
+    transition:transform .25s ease, border-color .25s ease;
+  }
+  .skill-block:hover{
+    transform:translateY(-3px);
+    border-color:var(--accent-dim);
+  }
+  .skill-block::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:3px;
+    background:linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .skill-block .sb-icon{
+    font-size:22px;
+    line-height:1;
+    margin-bottom:10px;
+    display:block;
   }
   .skill-block .sb-tag{
     font-size:10px;
@@ -699,7 +806,7 @@
     font-weight:600;
     font-size:15.5px;
     color:var(--ink);
-    margin-bottom:6px;
+    margin-bottom:8px;
   }
   .skill-block .sb-list{
     font-family:'IBM Plex Mono', monospace;
@@ -710,7 +817,7 @@
   .skill-block::after{
     content:"\2713";
     position:absolute;
-    top:12px;
+    top:14px;
     right:14px;
     font-size:11px;
     color:var(--stamp);
@@ -727,17 +834,28 @@
   .contact-row a:hover{ color:var(--accent); }
 
   .glossary{
-    padding:20px 0 10px;
+    padding:26px 0 10px;
   }
-  .glossary h2{
+  .glossary-header{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .glossary-header h2{
     font-size:24px;
     color:var(--ink);
-    margin:6px 0 20px;
+    margin:0;
+  }
+  .glossary-header .gh-rule{
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, var(--line), transparent);
   }
   .glossary-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:16px;
+    gap:14px;
   }
   @media (max-width:560px){
     .glossary-grid{ grid-template-columns:1fr; }
@@ -745,15 +863,40 @@
   .glossary-item{
     background:var(--bg-raised);
     border:1px solid var(--line);
-    border-radius:3px;
-    padding:14px 16px;
+    border-radius:5px;
+    padding:16px 16px 14px;
+    position:relative;
+    overflow:hidden;
+    transition:transform .22s ease, border-color .22s ease;
+  }
+  .glossary-item:hover{
+    transform:translateY(-2px);
+    border-color:var(--accent-dim);
+  }
+  .glossary-item::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:2.5px;
+    background:linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity:.6;
+  }
+  .glossary-item .gi-top{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:6px;
+  }
+  .glossary-item .gi-icon{
+    font-size:15px;
+    line-height:1;
   }
   .glossary-item h4{
     font-family:'Newsreader', serif;
     font-weight:600;
     font-size:15px;
     color:var(--accent);
-    margin-bottom:6px;
+    margin:0;
   }
   .glossary-item p{
     font-family:'Newsreader', serif;
@@ -863,18 +1006,26 @@
 
         <div class="block-content" data-content>
           <p>
-            I'm a graduate student at Northeastern University, studying Information Systems,
-            with a background in Computer Science and a focus on fintech and blockchain
-            engineering. I build systems that don't just work; they can be independently
-            checked.
+            I'm Zenish Borad, a graduate student at Northeastern University focused on
+            fintech and blockchain engineering. I care about building financial systems
+            that don't just work; they can be independently checked.
           </p>
-          <h3 style="font-size:15px; color:var(--accent-dim); text-transform:uppercase; letter-spacing:0.08em; margin:26px 0 10px;">Experience</h3>
           <p>
-            <strong style="color:var(--ink);">Sigzen Technologies</strong>, Backend Engineer Intern.
-            Built automated inventory and sales data pipelines in Python, containerized
-            analytics workflows with Docker, and designed SQL dashboards that turned raw
-            sales data into financial forecasting insights, the same pipeline-first
-            approach I later applied to blockchain data systems.
+            Right now, I'm building trading systems, smart contracts, and data pipelines
+            that turn raw on-chain and market data into something reliable and verifiable,
+            rather than something you just have to take on faith.
+          </p>
+          <p>
+            That's grown out of earlier work building automated data pipelines and
+            financial reporting systems, where I saw firsthand how much of finance still
+            runs on manual reconciliation and unverifiable process, and decided that was
+            the problem worth solving.
+          </p>
+          <p>
+            Going forward, I want to keep working at that intersection of fintech and
+            blockchain: extending on-chain verification into full trading systems, and
+            building tools that make financial data genuinely usable and trustworthy for
+            people who need it most.
           </p>
         </div>
       </section>
@@ -899,12 +1050,25 @@
               <span class="status">Active</span>
             </div>
             <p>
-              A trading platform combining seven technical indicators through a majority-vote
-              signal engine (+40.38% backtested return, Sharpe 0.64), now being extended with
-              an on-chain verification layer, where every trading decision is committed to a
-              testnet smart contract and independently re-verified against the strategy's
-              own logic.
+              A trading platform combining seven technical indicators (RSI, MACD,
+              Bollinger Bands, SMA/EMA, Stochastic, ATR, OBV) through a 4-of-7
+              majority-vote signal engine, with automated risk management (stop-loss,
+              take-profit, and daily loss limits) and live exchange integration across
+              100+ venues via CCXT.
             </p>
+            <p>
+              Currently being extended into a full verification layer: every trading
+              decision is hashed and committed to a public testnet smart contract, then
+              independently re-verified by replaying the exact signal logic against the
+              same market data, with tamper detection built in to catch mismatched
+              trades.
+            </p>
+            <div class="proj-metrics">
+              <div><span class="pm-val">+40.38%</span><span class="pm-label">backtested return</span></div>
+              <div><span class="pm-val">0.64</span><span class="pm-label">Sharpe ratio</span></div>
+              <div><span class="pm-val">7</span><span class="pm-label">indicators</span></div>
+              <div><span class="pm-val">100+</span><span class="pm-label">exchanges (CCXT)</span></div>
+            </div>
             <div class="stack">Stack: <span>Python · Flask · SQLite · Solidity · CCXT · TA-Lib</span></div>
             <div class="links">
               <a href="https://github.com/Zenish2001/ChainProof" target="_blank" rel="noopener">View repository →</a>
@@ -917,10 +1081,9 @@
               <span class="status">Active</span>
             </div>
             <p>
-              A constant-product AMM built in Solidity with 100% test coverage, paired with
-              a live web3 UI showing a real-time reserves curve and swap execution-price
-              history, plus a natural-language interface to Bitcoin blockchain data,
-              powered by an LLM text-to-SQL engine.
+              A constant-product AMM in Solidity with a live web3 dashboard, plus a
+              natural-language interface to Bitcoin blockchain data. Full details on the
+              repository.
             </p>
             <div class="stack">Stack: <span>Solidity · Hardhat · Python · Bitcoin Core RPC · Gemini API</span></div>
             <div class="links">
@@ -946,21 +1109,25 @@
         <div class="block-content" data-content>
           <div class="skill-blocks">
             <div class="skill-block">
+              <span class="sb-icon">&#9922;</span>
               <div class="sb-tag">Block 3.1</div>
               <h4>Blockchain &amp; Web3</h4>
               <div class="sb-list">Bitcoin Core RPC<br>Ethereum EVM internals<br>Solidity<br>Uniswap v2/v3 AMMs<br>Price oracles</div>
             </div>
             <div class="skill-block">
+              <span class="sb-icon">&lt;/&gt;</span>
               <div class="sb-tag">Block 3.2</div>
               <h4>Languages</h4>
               <div class="sb-list">Python<br>SQL<br>Rust<br>R</div>
             </div>
             <div class="skill-block">
+              <span class="sb-icon">&#9881;&#65039;</span>
               <div class="sb-tag">Block 3.3</div>
               <h4>Backend &amp; Data</h4>
               <div class="sb-list">Flask<br>REST APIs<br>CCXT<br>Pandas / NumPy<br>Scikit-learn</div>
             </div>
             <div class="skill-block">
+              <span class="sb-icon">&#9729;&#65039;</span>
               <div class="sb-tag">Block 3.4</div>
               <h4>Infrastructure</h4>
               <div class="sb-list">AWS<br>Docker<br>Git<br>GitHub Actions</div>
@@ -980,7 +1147,7 @@
           <div class="verify-concept">Concept: Digital Signature</div>
           <button type="button" class="verify-btn" data-verify data-concept="signature">Sign &amp; Verify</button>
           <div class="verify-status" data-status>Contact details are only released once a message is signed with the private key and verified against the public key.</div>
-          <div class="signature" data-signature>Zenish Borad</div>
+          <div class="signature" data-signature>ZB</div>
           <div class="signature-caption" data-signature-caption style="opacity:0; transition:opacity .5s ease .3s;">verified signature</div>
         </div>
 
@@ -997,38 +1164,41 @@
 
     <section class="glossary" id="glossary">
       <div class="verify-concept">What these mean</div>
-      <h2>Concepts used</h2>
+      <div class="glossary-header">
+        <h2>Concepts used</h2>
+        <div class="gh-rule"></div>
+      </div>
       <div class="glossary-grid">
         <div class="glossary-item">
-          <h4 style="color:var(--accent);">Private &amp; Public Key</h4>
+          <div class="gi-top"><span class="gi-icon">&#128273;</span><h4 style="color:var(--accent);">Private &amp; Public Key</h4></div>
           <p>A key pair. The private key is a secret number only you hold, used to sign messages and prove ownership. The public key is derived from it and safe to share; others use it to verify your signature without ever seeing the private key itself.</p>
         </div>
         <div class="glossary-item">
-          <h4 style="color:var(--accent2);">Hash</h4>
+          <div class="gi-top"><span class="gi-icon">&#35;</span><h4 style="color:var(--accent2);">Hash</h4></div>
           <p>A function that turns any input into a fixed-length string of characters. The same input always produces the same hash, and changing even one character changes the entire result.</p>
         </div>
         <div class="glossary-item">
-          <h4 style="color:var(--accent);">Block &amp; Blockchain</h4>
+          <div class="gi-top"><span class="gi-icon">&#9922;</span><h4 style="color:var(--accent);">Block &amp; Blockchain</h4></div>
           <p>A block is a bundle of data sealed together with a hash. A blockchain is a chain of these blocks, each one referencing the hash of the one before it, so editing an old block would break every block after it.</p>
         </div>
         <div class="glossary-item">
-          <h4 style="color:var(--accent2);">Nonce (SHA-256)</h4>
+          <div class="gi-top"><span class="gi-icon">&#127919;</span><h4 style="color:var(--accent2);">Nonce (SHA-256)</h4></div>
           <p>A one-time number combined with data and run through a hashing function. Change the nonce and the whole output changes; that's how a result can be tied to one specific attempt.</p>
         </div>
         <div class="glossary-item">
-          <h4 style="color:var(--accent);">Merkle Proof</h4>
+          <div class="gi-top"><span class="gi-icon">&#127795;</span><h4 style="color:var(--accent);">Merkle Proof</h4></div>
           <p>A way to prove one piece of data belongs to a larger set, without revealing the whole set, by checking it against a chain of paired hashes up to a single "root" value.</p>
         </div>
         <div class="glossary-item">
-          <h4 style="color:var(--accent2);">Consensus</h4>
+          <div class="gi-top"><span class="gi-icon">&#129309;</span><h4 style="color:var(--accent2);">Consensus</h4></div>
           <p>How multiple independent parties agree a piece of information is valid. Instead of trusting one source, a majority has to confirm it first.</p>
         </div>
         <div class="glossary-item">
-          <h4 style="color:var(--accent);">Smart Contract Call</h4>
+          <div class="gi-top"><span class="gi-icon">&#9881;&#65039;</span><h4 style="color:var(--accent);">Smart Contract Call</h4></div>
           <p>Running a small piece of code stored on a blockchain and getting back whatever it returns, the same way an app might call a function, but the code and result are both publicly checkable.</p>
         </div>
         <div class="glossary-item">
-          <h4 style="color:var(--accent2);">Digital Signature</h4>
+          <div class="gi-top"><span class="gi-icon">&#9999;&#65039;</span><h4 style="color:var(--accent2);">Digital Signature</h4></div>
           <p>Proof that a message really came from a specific person, created with a private key only they hold, and checkable by anyone using the matching public key.</p>
         </div>
       </div>
